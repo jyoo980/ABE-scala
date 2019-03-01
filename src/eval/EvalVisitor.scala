@@ -19,11 +19,17 @@ class EvalVisitor extends Visitor[Value, Environment] {
     }
   }
 
-  override def visit(expr: Var, env: Environment) = {
+  override def visit(expr: Var, env: Environment): Value = {
     try {
       env.lookup(expr)
     } catch {
       case e: Exception => throw e
     }
+  }
+
+  override def visit(expr: Add, env: Environment): Value = {
+    val lhsVal = expr.lhs.accept(this, env).toNum()
+    val rhsVal = expr.rhs.accept(this, env).toNum()
+    new NumValue(lhsVal + rhsVal)
   }
 }
